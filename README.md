@@ -112,46 +112,66 @@ PUT	/api/orders/:id/status	Update order status
 
 🧪 Demo Data (PostgreSQL example)
 Users
-sql
+
 ```
-INSERT INTO "User" (id, name, email, password, role)
-VALUES
-(uuid_generate_v4(), 'Alice', 'alice@example.com', 'password123', 'USER'),
-(uuid_generate_v4(), 'Bob', 'bob@example.com', 'password123', 'USER'),
-(uuid_generate_v4(), 'Admin', 'admin@example.com', 'adminpass', 'ADMIN');
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "123456",
+  "role": "ADMIN"
+}
+
 ```
 Categories
-sql
+
 ```
-INSERT INTO "Category" (id, name)
-VALUES
-(uuid_generate_v4(), 'Fruits'),
-(uuid_generate_v4(), 'Vegetables'),
-(uuid_generate_v4(), 'Beverages');
+{
+  "name": "Grocery Store",
+  "slug": "grocery-store"
+}
+
+```
+
+Sub Categories
+
+```
+{
+  "name": "Spice & Herb Shop",
+  "slug": "spice-herb-shop",
+  "parentId": "PARENT_CATEGORY_ID"
+}
 ```
 Products
-sql
+
 ```
-INSERT INTO "Product" (id, name, description, price, categoryId)
-VALUES
-(uuid_generate_v4(), 'Apple', 'Fresh red apples', 3.50, (SELECT id FROM "Category" WHERE name='Fruits')),
-(uuid_generate_v4(), 'Orange Juice', 'Fresh squeezed', 5.99, (SELECT id FROM "Category" WHERE name='Beverages')),
-(uuid_generate_v4(), 'Carrot', 'Organic carrots', 2.00, (SELECT id FROM "Category" WHERE name='Vegetables'));
+{
+  "name": "Turmeric Powder",
+  "slug": "turmeric-powder",
+  "price": 120,
+  "description": "Organic turmeric powder",
+  "categoryId": "SUB_CATEGORY_ID"
+}
+
 ```
 Orders
-sql
+
 ```
-INSERT INTO "Order" (id, userId, status, totalAmount, createdAt, updatedAt)
-VALUES
-(uuid_generate_v4(), (SELECT id FROM "User" WHERE name='Alice'), 'PENDING', 15.00, now(), now());
+{
+  "userId": "USER_ID",
+  "items": [
+    {
+      "productId": "PRODUCT_ID_1",
+      "quantity": 2,
+      "price": 120
+    },
+    {
+      "productId": "PRODUCT_ID_2",
+      "quantity": 1,
+      "price": 150
+    }
+  ]
+}
+
 ```
 
-Example order items:
 
-sql
-```
-INSERT INTO "OrderItem" (id, orderId, productId, quantity, price)
-VALUES
-(uuid_generate_v4(), (SELECT id FROM "Order"), (SELECT id FROM "Product" WHERE name='Apple'), 3, 3.50),
-(uuid_generate_v4(), (SELECT id FROM "Order"), (SELECT id FROM "Product" WHERE name='Orange Juice'), 1, 5.99);
-```

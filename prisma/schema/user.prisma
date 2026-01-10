@@ -7,4 +7,5 @@ model User {
   createdAt DateTime @default(now())
 
   // vendor    Vendor?
+  orders Order[]
 }

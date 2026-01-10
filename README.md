@@ -80,35 +80,43 @@ Server will run on http://localhost:5000
 
 📌 API Endpoints
 📍 User Routes
+```
 Method	Endpoint	Description
 POST	/api/users	Create new user
 GET	/api/users	Get all users
 GET	/api/users/:id	Get user by ID
 PUT	/api/users/:id	Update user
 DELETE	/api/users/:id	Delete user
+```
 
 📍 Category Routes
+```
 Method	Endpoint	Description
 POST	/api/categories	Create category
 GET	/api/categories	Get all categories
 GET	/api/categories/:id	Get category by ID
 PUT	/api/categories/:id	Update category
 DELETE	/api/categories/:id	Delete category
+```
 
 📍 Product Routes
+```
 Method	Endpoint	Description
 POST	/api/products	Create product
 GET	/api/products	Get all products
 GET	/api/products/:id	Get product by ID
 PUT	/api/products/:id	Update product
 DELETE	/api/products/:id	Delete product
+```
 
 📍 Order Routes
+```
 Method	Endpoint	Description
 POST	/api/orders	Create order
 GET	/api/orders	Get all orders
 GET	/api/orders/:id	Get order by ID
 PUT	/api/orders/:id/status	Update order status
+```
 
 🧪 Demo Data (PostgreSQL example)
 Users

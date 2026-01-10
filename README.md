@@ -134,8 +134,10 @@ Categories
 
 ```
 {
-  "name": "Grocery Store",
-  "slug": "grocery-store"
+  "userId": "uuid-of-admin-user",
+  "name": "Organic Food",
+  "slug": "organic-food",
+  "parentId": null
 }
 
 ```
@@ -144,15 +146,17 @@ Sub Categories
 
 ```
 {
-  "name": "Spice & Herb Shop",
-  "slug": "spice-herb-shop",
-  "parentId": "PARENT_CATEGORY_ID"
+  "userId": "uuid-of-admin-user",
+  "name": "Spices & Herbs",
+  "slug": "spices-herbs",
+  "parentId": "uuid-of-grocery-store-category"
 }
 ```
 Products
 
 ```
 {
+  "userId": "uuid-of-admin-user",
   "name": "Turmeric Powder",
   "slug": "turmeric-powder",
   "price": 120,

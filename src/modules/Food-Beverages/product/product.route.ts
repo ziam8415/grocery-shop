@@ -5,11 +5,8 @@ const router = Router();
 
 router.post("/", ProductController.createProduct);
 router.get("/", ProductController.getAllProducts);
-router.get(
-  "/subcategory/:categoryId",
-  ProductController.getProductsBySubCategory
-);
-router.get("/:productId", ProductController.getProductById);
-router.delete("/:productId", ProductController.deleteProduct);
+router.get("/:id", ProductController.getSingleProduct);
+router.put("/:id", ProductController.updateProduct);
+router.delete("/:id", ProductController.deleteProduct);
 
-export const ProductRouter = router;
+export const ProductRoutes = router;

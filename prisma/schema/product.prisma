@@ -11,5 +11,10 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  isDeleted Boolean @default(false)
+
+  @@index([name])
+  @@index([price])
+
   orderItems OrderItem[]
 }

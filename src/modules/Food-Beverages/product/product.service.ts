@@ -1,43 +1,58 @@
 import { prisma } from "../../../utils/prisma";
 
-const createProduct = async (data: any) => {
+const createProduct = async (payload: any) => {
   return prisma.product.create({
-    data,
+    data: payload,
   });
 };
 
-const getAllProducts = async () => {
-  return prisma.product.findMany();
-};
+const getAllProducts = async (query: any) => {
+  const { search, minPrice, maxPrice, category } = query;
 
-const getProductsBySubCategory = async (categoryId: string) => {
   return prisma.product.findMany({
-    where: { categoryId },
+    where: {
+      name: search ? { contains: search, mode: "insensitive" } : undefined,
+      price: {
+        gte: minPrice ? Number(minPrice) : undefined,
+        lte: maxPrice ? Number(maxPrice) : undefined,
+      },
+      categoryId: category || undefined,
+      // vendorId: vendorId || undefined,
+    },
     include: {
       category: true,
+      // vendor: true,
     },
   });
 };
 
-const getProductById = async (productId: string) => {
+const getSingleProduct = async (id: string) => {
   return prisma.product.findUnique({
-    where: { id: productId },
+    where: { id },
     include: {
       category: true,
+      // vendor: true,
     },
   });
 };
 
-const deleteProduct = async (productId: string) => {
+const updateProduct = async (id: string, payload: any) => {
+  return prisma.product.update({
+    where: { id },
+    data: payload,
+  });
+};
+
+const deleteProduct = async (id: string) => {
   return prisma.product.delete({
-    where: { id: productId },
+    where: { id },
   });
 };
 
 export const ProductService = {
   createProduct,
   getAllProducts,
-  getProductsBySubCategory,
-  getProductById,
+  getSingleProduct,
+  updateProduct,
   deleteProduct,
 };

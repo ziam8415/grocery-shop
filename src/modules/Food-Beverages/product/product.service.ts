@@ -1,58 +1,107 @@
 import { prisma } from "../../../utils/prisma";
+import { CreateProductInput } from "./product.types";
 
-const createProduct = async (payload: any) => {
-  return prisma.product.create({
-    data: payload,
-  });
-};
+export async function createProduct(data: CreateProductInput) {
+  return prisma.$transaction(async (tx) => {
+    return tx.product.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+        basePrice: data.basePrice,
+        salePrice: data.salePrice,
+        description: data.description,
+        ingredients: data.ingredients,
+        nutritionInfo: data.nutritionInfo,
+        brand: data.brand,
+        expiryDays: data.expiryDays,
+        categoryId: data.categoryId,
 
-const getAllProducts = async (query: any) => {
-  const { search, minPrice, maxPrice, category } = query;
+        images: {
+          create: data.images?.map((img) => ({
+            url: img.url,
+            isMain: img.isMain ?? false,
+          })),
+        },
 
-  return prisma.product.findMany({
-    where: {
-      name: search ? { contains: search, mode: "insensitive" } : undefined,
-      price: {
-        gte: minPrice ? Number(minPrice) : undefined,
-        lte: maxPrice ? Number(maxPrice) : undefined,
+        variants: {
+          create: await Promise.all(
+            data.variants.map(async (variant) => ({
+              sku: variant.sku,
+              price: variant.price,
+              stock: variant.stock,
+              isDefault: variant.isDefault ?? false,
+
+              attributes: {
+                create: await Promise.all(
+                  variant.attributes.map(async (attr) => {
+                    const attribute = await tx.attribute.upsert({
+                      where: { name: attr.attribute },
+                      update: {},
+                      create: { name: attr.attribute },
+                    });
+
+                    const attributeValue = await tx.attributeValue.upsert({
+                      where: {
+                        attributeId_value: {
+                          attributeId: attribute.id,
+                          value: attr.value,
+                        },
+                      },
+                      update: {},
+                      create: {
+                        attributeId: attribute.id,
+                        value: attr.value,
+                      },
+                    });
+
+                    return {
+                      attributeValueId: attributeValue.id,
+                    };
+                  })
+                ),
+              },
+            }))
+          ),
+        },
       },
-      categoryId: category || undefined,
-      // vendorId: vendorId || undefined,
-    },
+
+      include: {
+        images: true,
+        variants: {
+          include: {
+            attributes: {
+              include: {
+                attributeValue: {
+                  include: {
+                    attribute: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  });
+}
+
+export async function getAllProducts() {
+  return prisma.product.findMany({
     include: {
-      category: true,
-      // vendor: true,
+      images: true,
+      variants: {
+        include: {
+          attributes: {
+            include: {
+              attributeValue: {
+                include: {
+                  attribute: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
-};
-
-const getSingleProduct = async (id: string) => {
-  return prisma.product.findUnique({
-    where: { id },
-    include: {
-      category: true,
-      // vendor: true,
-    },
-  });
-};
-
-const updateProduct = async (id: string, payload: any) => {
-  return prisma.product.update({
-    where: { id },
-    data: payload,
-  });
-};
-
-const deleteProduct = async (id: string) => {
-  return prisma.product.delete({
-    where: { id },
-  });
-};
-
-export const ProductService = {
-  createProduct,
-  getAllProducts,
-  getSingleProduct,
-  updateProduct,
-  deleteProduct,
-};
+}

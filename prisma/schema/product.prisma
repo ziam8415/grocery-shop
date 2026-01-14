@@ -1,20 +1,81 @@
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  slug        String   @unique
-  price       Float
-  description String?
+  id            String   @id @default(uuid())
+  name          String
+  slug          String   @unique
 
-  categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  basePrice     Float?
+  salePrice     Float?
+  isActive      Boolean  @default(true)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  description   String?
+  ingredients   String?
+  nutritionInfo Json?
+  brand         String?
+  expiryDays    Int?
 
-  isDeleted Boolean @default(false)
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id])
 
-  @@index([name])
-  @@index([price])
+  images        ProductImage[]
+  variants      ProductVariant[]
 
-  orderItems OrderItem[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  isMain    Boolean  @default(false)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model ProductVariant {
+  id        String   @id @default(uuid())
+  sku       String   @unique
+  price     Float
+  stock     Int?
+  isDefault Boolean  @default(false)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+
+  attributes VariantAttribute[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attribute {
+  id     String @id @default(uuid())
+  name   String @unique
+
+  values AttributeValue[]
+}
+
+model AttributeValue {
+  id          String @id @default(uuid())
+  value       String
+
+  attributeId String
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
+
+  variantAttributes VariantAttribute[]
+
+  @@unique([attributeId, value])
+}
+
+
+model VariantAttribute {
+  id               String @id @default(uuid())
+
+  productVariantId String
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
+
+  attributeValueId String
+  attributeValue   AttributeValue @relation(fields: [attributeValueId], references: [id])
 }

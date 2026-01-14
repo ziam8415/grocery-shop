@@ -1,35 +1,25 @@
 import { Request, Response } from "express";
-import { ProductService } from "./product.service";
+import * as productService from "./product.service";
+import { CreateProductInput } from "./product.types";
 
-const createProduct = async (req: Request, res: Response) => {
-  const product = await ProductService.createProduct(req.body);
-  res.status(201).json(product);
-};
+export async function createProduct(
+  req: Request<{}, {}, CreateProductInput>,
+  res: Response
+) {
+  try {
+    const product = await productService.createProduct(req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Product creation failed" });
+  }
+}
 
-const getAllProducts = async (req: Request, res: Response) => {
-  const products = await ProductService.getAllProducts(req.query);
-  res.json(products);
-};
-
-const getSingleProduct = async (req: Request, res: Response) => {
-  const product = await ProductService.getSingleProduct(req.params.id);
-  res.json(product);
-};
-
-const updateProduct = async (req: Request, res: Response) => {
-  const product = await ProductService.updateProduct(req.params.id, req.body);
-  res.json(product);
-};
-
-const deleteProduct = async (req: Request, res: Response) => {
-  await ProductService.deleteProduct(req.params.id);
-  res.json({ success: true, message: "Product deleted" });
-};
-
-export const ProductController = {
-  createProduct,
-  getAllProducts,
-  getSingleProduct,
-  updateProduct,
-  deleteProduct,
-};
+export async function getAllProducts(req: Request, res: Response) {
+  try {
+    const products = await productService.getAllProducts();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch products" });
+  }
+}

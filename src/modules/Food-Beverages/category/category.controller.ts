@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { CategoryService } from "./category.service";
 import { prisma } from "../../../utils/prisma"; // make sure prisma is imported
+import { catchAsync } from "../../../utils/asyncHandler";
 
 const createCategory = async (req: Request, res: Response) => {
   try {
@@ -37,8 +38,8 @@ const createCategory = async (req: Request, res: Response) => {
   }
 };
 
-const getCategories = async (_req: Request, res: Response) => {
-  try {
+export const getCategories = catchAsync(
+  async (_req: Request, res: Response, _next: NextFunction) => {
     const result = await CategoryService.getCategoriesWithSub();
 
     res.status(200).json({
@@ -46,14 +47,8 @@ const getCategories = async (_req: Request, res: Response) => {
       message: "Categories fetched",
       data: result,
     });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch categories",
-      error,
-    });
   }
-};
+);
 
 //get category by slug
 const getCategoryBySlug = async (req: Request, res: Response) => {

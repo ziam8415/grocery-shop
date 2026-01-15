@@ -28,8 +28,21 @@ const getUserById = async (id: string) => {
   });
 };
 
+const updateUser = async (
+  id: string,
+  payload: { name?: string; email?: string; password?: string; role?: Role }
+) => {
+  return prisma.user.update({
+    where: { id },
+    data: {
+      ...payload,
+    },
+  });
+};
+
 export const UserService = {
   createUser,
   getAllUsers,
   getUserById,
+  updateUser,
 };

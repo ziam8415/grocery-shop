@@ -1,6 +1,9 @@
+import makeSlug from "../../../utils/helper";
 import { prisma } from "../../../utils/prisma";
 
 const createCategory = async (data: any) => {
+  const categorySlug: string = makeSlug(data.name);
+  data.slug = categorySlug;
   return prisma.category.create({ data });
 };
 

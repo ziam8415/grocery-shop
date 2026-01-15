@@ -18,8 +18,34 @@ export async function createProduct(
 export async function getAllProducts(req: Request, res: Response) {
   try {
     const products = await productService.getAllProducts();
-    res.json(products);
+    res.status(200).json({
+      success: true,
+      message: "Product fetched successfully",
+      data: products,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch products" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch",
+      error,
+    });
   }
 }
+
+export const getProductsBySlug = async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+    const product = await productService.getProductsBySlug(slug);
+    res.status(200).json({
+      success: true,
+      message: "Product fetched successfully",
+      data: product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch",
+      error,
+    });
+  }
+};

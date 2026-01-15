@@ -1,12 +1,15 @@
+import makeSlug from "../../../utils/helper";
 import { prisma } from "../../../utils/prisma";
 import { CreateProductInput } from "./product.types";
 
 export async function createProduct(data: CreateProductInput) {
+  const productSlug = makeSlug(data.name);
+
   return prisma.$transaction(async (tx) => {
     return tx.product.create({
       data: {
         name: data.name,
-        slug: data.slug,
+        slug: productSlug,
         basePrice: data.basePrice,
         salePrice: data.salePrice,
         description: data.description,
@@ -89,6 +92,28 @@ export async function getAllProducts() {
   return prisma.product.findMany({
     include: {
       images: true,
+      // variants: {
+      //   include: {
+      //     attributes: {
+      //       include: {
+      //         attributeValue: {
+      //           include: {
+      //             attribute: true,
+      //           },
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
+    },
+  });
+}
+
+export const getProductsBySlug = (slug: string) => {
+  return prisma.product.findUnique({
+    where: { slug },
+    include: {
+      images: true,
       variants: {
         include: {
           attributes: {
@@ -104,4 +129,4 @@ export async function getAllProducts() {
       },
     },
   });
-}
+};

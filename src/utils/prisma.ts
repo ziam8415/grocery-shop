@@ -1,20 +1,15 @@
-// src/utils/prisma.ts
-// import { PrismaClient } from "@prisma/client";
-// import { PrismaPg } from "@prisma/adapter-pg";
-
-// const adapter = new PrismaPg({
-//   connectionString: process.env.DATABASE_URL!,
-// });
-
-// export const prisma = new PrismaClient({ adapter });
-
+// prisma.ts
 import "dotenv/config";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const connectionString = `${process.env.DATABASE_URL}`;
+// Ensure the DATABASE_URL is set
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error("DATABASE_URL is missing in your .env file");
+}
 
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
-
-export { prisma };
+// Create a single PrismaClient instance
+export const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString }),
+});

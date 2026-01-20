@@ -1,15 +1,14 @@
-// prisma.config.ts
-import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
+import appConfig from "./src/config"; // your app config
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
-
+  // Singular datasource object
   datasource: {
-    url: env("DATABASE_URL"),
+    url: appConfig.database_url, // direct URL, no nesting
+    // Optional: shadow database for migrations
+    // shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL,
   },
-
   migrations: {
-    path: "prisma/migrations",
+    seed: "npx tsx prisma/seed.ts", // optional
   },
 });

@@ -5,7 +5,7 @@ import { envVars } from "../config/env";
 type AsyncHandler = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => Promise<void>;
 export const catchAsync =
   (fn: AsyncHandler) => (req: Request, res: Response, next: NextFunction) => {
